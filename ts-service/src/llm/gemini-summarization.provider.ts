@@ -3,11 +3,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   SummarizationProvider,
   CandidateSummaryInput,
-  CandidateSummaryOutput,
+  CandidateSummaryResult,
 } from './summarization-provider.interface';
 
 import {SummarySchema} from './summary-schema'
-
+ 
 @Injectable()
 export class GeminiSummarizationProvider implements SummarizationProvider {
   private client: GoogleGenerativeAI;
@@ -18,7 +18,7 @@ export class GeminiSummarizationProvider implements SummarizationProvider {
 
   async generateCandidateSummary(
     input: CandidateSummaryInput,
-  ): Promise<CandidateSummaryOutput> {
+  ): Promise<CandidateSummaryResult> {
     const model = this.client.getGenerativeModel({
       model: 'gemini-1.5-flash',
     });
