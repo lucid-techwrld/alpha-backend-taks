@@ -1,96 +1,60 @@
-# InsightOps Python Service Starter
+# Python Service – Briefings API
 
-FastAPI starter service for the backend assessment.
+This service provides endpoints to manage and generate company briefings. Built with **FastAPI** and **SQLAlchemy**, it supports creating, retrieving, and generating reports for company briefings.  
 
-This service includes:
+---
 
-- FastAPI app bootstrap and health endpoint
-- SQLAlchemy wiring
-- Manual SQL migration runner
-- One small `sample_items` example feature
-- Jinja template wiring with a minimal base template
-- Pytest setup
+## Features
 
-The assessment-specific briefing features are intentionally not implemented.
+- Create a company briefing with metadata, key points, risks, and metrics.  
+- Retrieve an existing briefing by ID.  
+- Generate a report (HTML) for a briefing.  
+- Get the generated HTML report.  
 
-## Prerequisites
+---
 
-- Python 3.12
-- PostgreSQL running from repository root:
+## Tech Stack
 
+- **FastAPI** – API framework  
+- **SQLAlchemy** – ORM for database operations  
+- **SQLite / PostgreSQL** – Database support  
+- **Pydantic** – Request validation and schema management  
+- **pytest** – Unit and integration tests  
+
+---
+
+## API Endpoints
+
+| Method | Endpoint                  | Description                       |
+|--------|---------------------------|-----------------------------------|
+| POST   | `/briefings`              | Create a new briefing             |
+| GET    | `/briefings/{id}`         | Get briefing by ID                |
+| POST   | `/briefings/{id}/generate`| Generate HTML report for briefing |
+| GET    | `/briefings/{id}/html`    | Retrieve generated HTML report    |
+
+---
+
+## Getting Started
+
+1. Clone the repo:  
 ```bash
-docker compose up -d postgres
-```
-
-## Setup
-
-```bash
+git clone <repo_url>
 cd python-service
-python3.12 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
-cp .env.example .env
-```
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 
-## Environment
+---
 
-`.env.example` includes:
+## Future Improvements
 
-- `DATABASE_URL`
-- `APP_ENV`
-- `APP_PORT`
+ - Add authentication & authorization for secure access.
 
-## Run Migrations (Manual SQL Runner)
+ - Implement better error handling for report generation failures.
 
-Apply pending migrations:
+ - Add logging & monitoring for easier debugging in production.
 
-```bash
-cd python-service
-source .venv/bin/activate
-python -m app.db.run_migrations up
-```
+ - Support pagination and filtering for briefings.
 
-Roll back the latest migration:
-
-```bash
-cd python-service
-source .venv/bin/activate
-python -m app.db.run_migrations down --steps 1
-```
-
-How it works:
-
-- SQL files live in `python-service/db/migrations/`
-- A `schema_migrations` table tracks applied filenames
-- Up files are applied in sorted filename order (`*.sql` or `*.up.sql`)
-- Rollback uses a paired `*.down.sql` file for each applied migration
-- Applied migration files are skipped on subsequent runs
-
-## Run Service
-
-```bash
-cd python-service
-source .venv/bin/activate
-python -m uvicorn app.main:app --reload --port 8000
-```
-
-## Run Tests
-
-```bash
-cd python-service
-source .venv/bin/activate
-python -m pytest
-```
-
-## Project Layout
-
-- `app/main.py`: FastAPI bootstrap and router wiring
-- `app/config.py`: environment config
-- `app/db/`: SQLAlchemy session management and migration runner
-- `db/migrations/`: SQL migration files
-- `app/models/`: ORM models
-- `app/schemas/`: Pydantic request/response schemas
-- `app/services/`: service-layer logic and template helpers
-- `app/api/`: route handlers
-- `app/templates/`: Jinja templates
-- `tests/`: test suite
+ - Improve report templates and export options (PDF, DOCX).

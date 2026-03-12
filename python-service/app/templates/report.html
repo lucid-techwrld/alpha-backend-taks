@@ -1,0 +1,31 @@
+<h2>{{ report_title }}</h2>
+<p><strong>Company:</strong> {{ company_name }} ({{ ticker }})</p>
+<p><strong>Sector:</strong> {{ sector }}</p>
+<p><strong>Analyst:</strong> {{ analyst_name }}</p>
+
+<h3>Summary</h3>
+<p>{{ summary }}</p>
+
+<h3>Recommendation</h3>
+<p>{{ recommendation }}</p>
+
+<h3>Key Points</h3>
+<ul>
+  {% for point in key_points %}
+    <li>{{ point }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Risks</h3>
+<ul>
+  {% for risk in risks %}
+    <li>{{ risk }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Metrics</h3>
+<ul>
+  {% for metric in metrics %}
+    <li>{{ metric.name }}: {{ metric.value }}</li>
+  {% endfor %}
+</ul>

@@ -304,6 +304,19 @@ npm run start:dev
 
 ---
 
+# Running Tests
+
+Tests are written using **Jest** and **SuperTest**.
+
+Run tests:
+
+```
+npm run test
+```
+
+Tests use a **fake summarization provider** to avoid external API calls.
+
+---
 
 # Possible Improvements
 
@@ -330,7 +343,6 @@ A production system should use a robust queue such as:
 * Redis-based job queues
 * retry mechanisms
 * job backoff strategies
-* I normally uses BullMQ in most my projects
 
 ---
 
@@ -358,3 +370,51 @@ Enhancements could include:
 * automatic retries on invalid output
 * structured output parsers
 
+---
+
+### 5. Observability
+
+Production systems would include:
+
+* structured logging
+* metrics
+* job monitoring dashboards
+
+---
+
+# Design Considerations
+
+The solution prioritizes:
+
+* maintainability
+* modular architecture
+* asynchronous processing
+* testability
+* clean separation of concerns
+
+A smaller but well-structured solution was preferred over adding unnecessary complexity.
+
+---
+
+# Assumptions
+
+* Candidate entities already exist in the system.
+* Workspace ownership is provided via request headers.
+* Documents are available as text during upload.
+
+These assumptions keep the solution focused on the assessment goals.
+
+---
+
+# Conclusion
+
+This implementation demonstrates:
+
+* modular NestJS architecture
+* DTO validation
+* relational database modeling
+* asynchronous job processing
+* provider abstraction for AI integration
+* testable design
+
+The goal was to provide a **clear, maintainable, and production-oriented solution** while keeping the implementation focused and practical.
