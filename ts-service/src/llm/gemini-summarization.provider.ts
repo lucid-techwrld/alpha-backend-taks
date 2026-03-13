@@ -6,7 +6,9 @@ import {
   CandidateSummaryResult,
 } from './summarization-provider.interface';
 
-import {SummarySchema} from './summary-schema'
+import { SummaryDto } from './summary-dto'
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
  
 @Injectable()
 export class GeminiSummarizationProvider implements SummarizationProvider {
@@ -64,7 +66,11 @@ export class GeminiSummarizationProvider implements SummarizationProvider {
         throw new Error('Invalid JSON returned from Gemini');
     }
 
-    const validatedResponse = SummarySchema.parse(parsed) //For a better safe response
+    const validatedResponse = plainToInstance(SummaryDto, parsed)
+    const errors = await validate(validatedResponse);
+    if (errors.length > 0) {
+      throw new Error('Invalid  Response');
+    }
 
     return validatedResponse
   }

@@ -1,5 +1,8 @@
 import { randomUUID } from 'crypto';
 
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,8 +12,12 @@ import { CandidateDocument } from '../entities/candidate-document.entity';
 import { CandidateSummary } from '../entities/candidate-summary.entity';
 import { SampleCandidate } from '../entities/sample-candidate.entity';
 import { QueueService } from '../queue/queue.service';
-import { UploadCandidateDocumentDto } from './dto/upload-document.dto';
+import { OcrService } from "./ocr.service"
+import {  DocumentDTO } from './dto/upload-document.dto';
 import { SummaryWorker } from './workers/summary.worker'
+
+import * as fs from "fs";
+import * as path from "path"
 
 @Injectable()
 export class CandidatesService {
@@ -26,7 +33,9 @@ export class CandidatesService {
 
     private readonly queue: QueueService,
 
-    private readonly worker: SummaryWorker
+    private readonly worker: SummaryWorker,
+
+    private readonly ocrService: OcrService
   ) {}
 
   async ensureCandidate(user: AuthUser, candidateId: string) {
@@ -44,20 +53,43 @@ export class CandidatesService {
   async uploadDocument(
     user: AuthUser,
     candidateId: string,
-    dto: UploadCandidateDocumentDto,
+    rawText?: string,
+    file?: Express.Multer.File
   ) {
     await this.ensureCandidate(user, candidateId);
+
+    const data = {rawText, file};
+    const validatedData = plainToInstance(DocumentDTO, data)
+    const errors = await validate(validatedData);
+    if (errors.length > 0) {
+      throw new Error('Invalid document input');
+    }
+    
+    let fileKey;
+    let fileText;
+
+    if(validatedData.file) {
+        fileKey = await this.saveFile(validatedData.file)
+        fileText = await this.ocrService.extractText(validatedData.file)
+    }
+    
 
     const doc = this.documentRepo.create({
       id: randomUUID(),
       candidateId,
-      documentType: dto.documentType,
-      fileName: dto.fileName,
-      storageKey: `local/${randomUUID()}`,
-      rawText: dto.rawText,
+      documentType: file?.mimetype ?? "PLAIN_TEXT",
+      fileName: file?.originalname,
+      storageKey: fileKey,
+      rawText: file ? fileText : validatedData.rawText,
     });
 
     return this.documentRepo.save(doc);
+  }
+
+  async saveFile(file: Express.Multer.File) {
+    const uploadPath = path.join(__dirname, '..', 'candidate-uploads', file.originalname)
+    fs.writeFileSync(uploadPath, file.buffer)
+    return file.originalname
   }
 
   async requestSummary(user: AuthUser, candidateId: string) {

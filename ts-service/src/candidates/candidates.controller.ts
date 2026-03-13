@@ -1,16 +1,19 @@
 import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Post,
-    UseGuards,
-  } from '@nestjs/common';
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+
+import { FileInterceptor } from '@nestjs/platform-express';
   
   import { CurrentUser } from '../auth/auth-user.decorator';
   import { AuthUser } from '../auth/auth.types';
   import { FakeAuthGuard } from '../auth/fake-auth.guard';
-  import { UploadCandidateDocumentDto } from './dto/upload-document.dto';
   import { CandidatesService } from './candidates.service';
 
 
@@ -21,12 +24,14 @@ import {
     constructor(private readonly service: CandidatesService) {}
   
     @Post(':candidateId/documents')
+    @UseInterceptors(FileInterceptor("file"))
     uploadDocument(
       @CurrentUser() user: AuthUser,
       @Param('candidateId') candidateId: string,
-      @Body() dto: UploadCandidateDocumentDto,
+      @UploadedFile() file?: Express.Multer.File,
+      @Body('rawText') rawText?: string,
     ) {
-      return this.service.uploadDocument(user, candidateId, dto);
+      return this.service.uploadDocument(user, candidateId, rawText, file);
     }
   
     @Post(':candidateId/summaries/generate')

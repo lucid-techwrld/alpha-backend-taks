@@ -50,7 +50,6 @@ Key design goals:
 * **Validation:** class-validator / DTO validation
 * **Testing:** Jest + Supertest
 * **LLM Provider:** Google Gemini
-* **Schema Validation:** Zod (for validating LLM output)
 
 ---
 

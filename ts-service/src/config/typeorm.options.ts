@@ -6,6 +6,7 @@ import { SampleWorkspace } from '../entities/sample-workspace.entity';
 import {CandidateDocument} from "../entities/candidate-document.entity";
 import {CandidateSummary} from "../entities/candidate-summary.entity";
 import { InitialStarterEntities1710000000000 } from '../migrations/1710000000000-InitialStarterEntities';
+import { CandidateDocumentAndSummary1710000000001 } from "../migrations/1720000000000-CandidateDocumentsAndSummaries";
 
 export const defaultDatabaseUrl =
   'postgres://assessment_user:assessment_pass@localhost:5432/assessment_db';
@@ -21,7 +22,7 @@ export const getTypeOrmOptions = (
     CandidateDocument,
     CandidateSummary,
   ],
-  migrations: [InitialStarterEntities1710000000000],
+  migrations: [InitialStarterEntities1710000000000, CandidateDocumentAndSummary1710000000001],
   migrationsTableName: 'typeorm_migrations',
   synchronize: false,
   logging: false,
